@@ -46,7 +46,6 @@
       width: 100%;
       border-radius: 10px;
     }
-    /* Fade-in effect */
     .fade-in {
       opacity: 0;
       transform: translateY(20px);
@@ -86,7 +85,7 @@
   <div class="grid" id="galeria"></div>
 
   <script>
-    const accessKey = 'jo-EVzAB_FCOcXRsekcvFA4Yxa6oEPZCBh6nUT7l-RQ'; // <<<< Substitua pela sua Access Key do Unsplash
+    const accessKey = 'jo-EVzAB_FCOcXRsekcvFA4Yxa6oEPZCBh6nUT7l-RQ'; // Substitua pela sua Access Key
 
     async function gerarImagens() {
       const galeria = document.getElementById('galeria');
@@ -97,9 +96,9 @@
 
       const categoria = document.getElementById('categoria').value;
       const query = `balcony house ${categoria}`;
-      const sig = Math.random();  // número aleatório para forçar imagens diferentes
+      const randomPage = Math.floor(Math.random() * 10) + 1;  // página aleatória de 1 a 10
 
-      const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=6&client_id=${accessKey}&sig=${sig}`;
+      const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=6&page=${randomPage}&client_id=${accessKey}`;
 
       try {
         const response = await fetch(url);
