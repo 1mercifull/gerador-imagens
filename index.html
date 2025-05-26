@@ -66,38 +66,47 @@
   <div class="grid" id="galeria"></div>
 
   <script>
-    function gerarImagens() {
+    const accessKey = 'jo-EVzAB_FCOcXRsekcvFA4Yxa6oEPZCBh6nUT7l-RQ'; // <<<< Cole sua Access Key aqui
+
+    async function gerarImagens() {
       const galeria = document.getElementById('galeria');
-      galeria.innerHTML = ''; // Limpa a galeria
+      galeria.innerHTML = '';
+
       const categoria = document.getElementById('categoria').value;
-      const largura = 600;
-      const altura = 400;
-      const termos = `balcony,house,${categoria}`;
+      const query = `balcony house ${categoria}`;
 
-      for (let i = 0; i < 6; i++) {
-        const random = Math.floor(Math.random() * 10000); // número aleatório
-        const url = `https://source.unsplash.com/${largura}x${altura}/?${termos}&sig=${random}`;
+      const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=6&client_id=${accessKey}`;
 
-        const card = document.createElement('div');
-        card.className = 'card';
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
 
-        const img = document.createElement('img');
-        img.src = url;
-        img.alt = `Sacada ${i+1}`;
+        data.results.forEach((foto, i) => {
+          const card = document.createElement('div');
+          card.className = 'card';
 
-        const btnDownload = document.createElement('a');
-        btnDownload.href = url;
-        btnDownload.download = `sacada_${i+1}.jpg`;
-        btnDownload.innerText = 'Baixar';
-        btnDownload.style.display = 'inline-block';
-        btnDownload.style.marginTop = '10px';
-        btnDownload.style.textDecoration = 'none';
-        btnDownload.style.color = '#3498db';
-        btnDownload.style.fontWeight = 'bold';
+          const img = document.createElement('img');
+          img.src = foto.urls.regular;
+          img.alt = `Sacada ${i + 1}`;
 
-        card.appendChild(img);
-        card.appendChild(btnDownload);
-        galeria.appendChild(card);
+          const btnDownload = document.createElement('a');
+          btnDownload.href = foto.links.download + '?force=true';
+          btnDownload.target = '_blank';
+          btnDownload.innerText = 'Baixar';
+          btnDownload.style.display = 'inline-block';
+          btnDownload.style.marginTop = '10px';
+          btnDownload.style.textDecoration = 'none';
+          btnDownload.style.color = '#3498db';
+          btnDownload.style.fontWeight = 'bold';
+
+          card.appendChild(img);
+          card.appendChild(btnDownload);
+          galeria.appendChild(card);
+        });
+
+      } catch (error) {
+        galeria.innerHTML = '<p>Erro ao carregar imagens. Tente novamente.</p>';
+        console.error(error);
       }
     }
 
