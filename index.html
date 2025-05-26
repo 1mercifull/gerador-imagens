@@ -95,7 +95,7 @@
       loading.style.display = 'block';
 
       const categoria = document.getElementById('categoria').value;
-      const query = `house ${categoria}`;
+      const query = `simple home exterior ${categoria}`;
       const randomPage = Math.floor(Math.random() * 10) + 1;  // página aleatória de 1 a 10
 
       const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=6&page=${randomPage}&client_id=${accessKey}`;
