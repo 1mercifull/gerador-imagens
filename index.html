@@ -46,6 +46,16 @@
       width: 100%;
       border-radius: 10px;
     }
+    /* Fade-in effect */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .fade-in.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
   </style>
 </head>
 <body>
@@ -63,19 +73,33 @@
     <button onclick="gerarImagens()">Gerar Imagens</button>
   </div>
 
+  <div id="loading" style="display:none; margin-top:20px;">
+    <svg width="50" height="50" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="40" stroke="#3498db" stroke-width="8" fill="none" stroke-linecap="round">
+        <animateTransform attributeName="transform" type="rotate" dur="1s" repeatCount="indefinite"
+          from="0 50 50" to="360 50 50" />
+      </circle>
+    </svg>
+    <p>Carregando imagens...</p>
+  </div>
+
   <div class="grid" id="galeria"></div>
 
   <script>
-    const accessKey = 'jo-EVzAB_FCOcXRsekcvFA4Yxa6oEPZCBh6nUT7l-RQ'; // <<<< Cole sua Access Key aqui
+    const accessKey = 'jo-EVzAB_FCOcXRsekcvFA4Yxa6oEPZCBh6nUT7l-RQ'; // <<<< Substitua pela sua Access Key do Unsplash
 
     async function gerarImagens() {
       const galeria = document.getElementById('galeria');
+      const loading = document.getElementById('loading');
+      
       galeria.innerHTML = '';
+      loading.style.display = 'block';
 
       const categoria = document.getElementById('categoria').value;
       const query = `balcony house ${categoria}`;
+      const sig = Math.random();  // número aleatório para forçar imagens diferentes
 
-      const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=6&client_id=${accessKey}`;
+      const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=6&client_id=${accessKey}&sig=${sig}`;
 
       try {
         const response = await fetch(url);
@@ -88,6 +112,11 @@
           const img = document.createElement('img');
           img.src = foto.urls.regular;
           img.alt = `Sacada ${i + 1}`;
+          img.className = 'fade-in';
+
+          img.onload = () => {
+            img.classList.add('show');
+          };
 
           const btnDownload = document.createElement('a');
           btnDownload.href = foto.links.download + '?force=true';
@@ -107,10 +136,11 @@
       } catch (error) {
         galeria.innerHTML = '<p>Erro ao carregar imagens. Tente novamente.</p>';
         console.error(error);
+      } finally {
+        loading.style.display = 'none';
       }
     }
 
-    // Gera imagens automaticamente ao abrir
     gerarImagens();
   </script>
 
